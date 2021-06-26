@@ -1,11 +1,7 @@
-FROM python:3.7-alpine
-ENV USING_DOCKER yes
-WORKDIR /modmailbot
-COPY . /modmailbot
-RUN  export PIP_NO_CACHE_DIR=false \
-    && apk update \
-    && apk add --update --no-cache --virtual .build-deps alpine-sdk \
-    && pip install pipenv \
-    && pipenv install --deploy --ignore-pipfile \
-    && apk del .build-deps
-CMD ["pipenv", "run", "bot"]
+FROM library/python:latest
+RUN apt update && apt install -y pipenv
+RUN mkdir -p /bot && cd /bot && git clone https://github.com/kyb3r/logviewer .
+WORKDIR /bot
+RUN pipenv install
+
+CMD ["pipenv", "run", "python3", "app.py"]
